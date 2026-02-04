@@ -1,37 +1,62 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# 1. Création du graphe
+# Création du graphe
 G = nx.Graph()
 
 # Ajout des nœuds (PC, routeurs, serveurs)
-G.add_node("PC1", type="ordinateur", localisation="Salle 1")
-G.add_node("PC2", type="ordinateur", localisation="Salle 2")
-G.add_node("PC3", type="ordinateur", localisation="Salle 3")
-G.add_node("PC4", type="ordinateur", localisation="Salle 4")
-G.add_node("R1", type="routeur", localisation="Etage 1")
-G.add_node("R2", type="routeur", localisation="Etage 2")
-G.add_node("R3", type="routeur", localisation="Etage 3")
-G.add_node("R4", type="routeur", localisation="Etage 4")
-G.add_node("Serveur1", type="serveur", localisation="Datacenter A")
-G.add_node("Serveur2", type="serveur", localisation="Datacenter B")
+nodes = [
+    ("PC1", {"type": "ordinateur", "localisation": "Salle 1"}),
+    ("PC2", {"type": "ordinateur", "localisation": "Salle 2"}),
+    ("PC3", {"type": "ordinateur", "localisation": "Salle 3"}),
+    ("PC4", {"type": "ordinateur", "localisation": "Salle 4"}),
+    ("PC5", {"type": "ordinateur", "localisation": "Salle 5"}),
+    ("PC6", {"type": "ordinateur", "localisation": "Salle 6"}),
+    ("PC7", {"type": "ordinateur", "localisation": "Salle 7"}),
+    ("PC8", {"type": "ordinateur", "localisation": "Salle 8"}),
+    ("R1", {"type": "routeur", "localisation": "Etage 1"}),
+    ("R2", {"type": "routeur", "localisation": "Etage 2"}),
+    ("R3", {"type": "routeur", "localisation": "Etage 3"}),
+    ("R4", {"type": "routeur", "localisation": "Etage 4"}),
+    ("R5", {"type": "routeur", "localisation": "Etage 5"}),
+    ("R6", {"type": "routeur", "localisation": "Etage 6"}),
+    ("Serveur1", {"type": "serveur", "localisation": "Datacenter A"}),
+    ("Serveur2", {"type": "serveur", "localisation": "Datacenter B"}),
+    ("Serveur3", {"type": "serveur", "localisation": "Datacenter C"}),
+    ("Serveur4", {"type": "serveur", "localisation": "Datacenter D"}),
+]
+
+G.add_nodes_from(nodes)
 
 # Ajout des arêtes avec une latence en ms
-G.add_edge("PC1", "R1", latence=2)
-G.add_edge("PC2", "R1", latence=3)
-G.add_edge("PC3", "R2", latence=4)
-G.add_edge("PC4", "R3", latence=5)
-G.add_edge("R1", "R2", latence=10)
-G.add_edge("R2", "R3", latence=8)
-G.add_edge("R3", "R4", latence=12)
-G.add_edge("R1", "Serveur1", latence=15)
-G.add_edge("R2", "Serveur1", latence=7)
-G.add_edge("R3", "Serveur2", latence=9)
-G.add_edge("R4", "Serveur2", latence=6)
-G.add_edge("Serveur1", "Serveur2", latence=20)
+edges = [
+    ("PC1", "R1", {"latence": 2}),
+    ("PC2", "R1", {"latence": 3}),
+    ("PC3", "R2", {"latence": 4}),
+    ("PC4", "R3", {"latence": 5}),
+    ("PC5", "R4", {"latence": 6}),
+    ("PC6", "R5", {"latence": 7}),
+    ("PC7", "R6", {"latence": 8}),
+    ("PC8", "R6", {"latence": 9}),
+    ("R1", "R2", {"latence": 10}),
+    ("R2", "R3", {"latence": 8}),
+    ("R3", "R4", {"latence": 12}),
+    ("R4", "R5", {"latence": 11}),
+    ("R5", "R6", {"latence": 13}),
+    ("R1", "Serveur1", {"latence": 15}),
+    ("R2", "Serveur1", {"latence": 7}),
+    ("R3", "Serveur2", {"latence": 9}),
+    ("R4", "Serveur2", {"latence": 6}),
+    ("R5", "Serveur3", {"latence": 13}),
+    ("R6", "Serveur4", {"latence": 14}),
+    ("Serveur1", "Serveur2", {"latence": 20}),
+    ("Serveur2", "Serveur3", {"latence": 18}),
+    ("Serveur3", "Serveur4", {"latence": 16}),
+]
 
+G.add_edges_from(edges)
 
-# 3. Fonction pour trouver le chemin le plus rapide depuis un PC vers tous les autres nœuds
+# Fonction pour trouver le chemin le plus rapide depuis un PC vers tous les autres nœuds
 def chemin_plus_rapide_depuis(source):
     print(f"\n--- Chemins les plus rapides depuis {source} ---")
     for target in G.nodes():
@@ -43,21 +68,22 @@ def chemin_plus_rapide_depuis(source):
             except nx.NetworkXNoPath:
                 print(f"Aucun chemin trouvé de {source} à {target}")
 
-
-# 4. Exemples d'utilisation
+# Exemples d'utilisation
 chemin_plus_rapide_depuis("PC1")
 chemin_plus_rapide_depuis("PC3")
-chemin_plus_rapide_depuis("PC4")
+chemin_plus_rapide_depuis("PC6")
 
-# 2. Visualisation du réseau
+# Visualisation du réseau
 def visualiser_reseau():
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(14, 9))
     pos = nx.spring_layout(G, seed=42)  # Positionnement des nœuds
-    nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=800)
+
+    # Dessiner les nœuds sans couleur spécifique
+    nx.draw(G, pos, with_labels=True, node_color='skyblue', font_weight='bold', node_size=1000, font_size=8)
 
     # Affichage des latences sur les arêtes
     edge_labels = nx.get_edge_attributes(G, 'latence')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=7)
 
     plt.title("Réseau informatique avec latences (ms)")
     plt.show()
